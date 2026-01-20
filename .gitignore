@@ -1,0 +1,43 @@
+# Archivos sensibles
+.env
+*.env
+
+# Archivos de caché y temporales
+cache_facturas.json
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Archivos generados por la aplicación
+*.xlsx
+facturas*.xlsx
+*_optimized.png
+*_optimized.jpg
+
+# Base de datos local
+facturas.db
+*.db
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Archivos temporales de Windows
+~$*
