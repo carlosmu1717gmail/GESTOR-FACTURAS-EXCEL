@@ -4,6 +4,14 @@ Sistema inteligente de extracción y gestión de datos de facturas usando IA (Go
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
+
+## 🎯 Acceso Rápido
+
+| 📥 Descargar | 📖 Documentación | 🚀 Instalación |
+|--------------|------------------|----------------|
+| [**Descarga ZIP**](https://github.com/carlosmu1717gmail/ANTIGRAVITY-GESTOR-FACTURAS/archive/refs/heads/main.zip) | [Guía Completa (README.md)](README.md) | [Instalación Rápida (QUICKSTART.md)](QUICKSTART.md) |
+| [Clonar con Git](DESCARGA.md) | [Guía sin Git](DESCARGA.md) | [Instalación Manual](#instalación-manual-avanzada) |
 
 ## 🌟 Características
 
@@ -20,13 +28,35 @@ Sistema inteligente de extracción y gestión de datos de facturas usando IA (Go
 - Python 3.9+
 - API Key de Google Gemini (gratuita en [ai.google.dev](https://ai.google.dev))
 
-## 🚀 Instalación
+## 🚀 Instalación Rápida
 
-### 1. Clonar el repositorio
+> 📖 **¿Primera vez?** Lee la [**Guía de Instalación Paso a Paso (QUICKSTART.md)**](QUICKSTART.md)
+
+### Para Usuarios que Clonan desde GitHub:
+
+**1. Clona el repositorio:**
 ```bash
-git clone https://github.com/TU_USUARIO/AutoGestorFacturas.git
-cd AutoGestorFacturas
+git clone https://github.com/carlosmu1717gmail/ANTIGRAVITY-GESTOR-FACTURAS.git
+cd ANTIGRAVITY-GESTOR-FACTURAS
 ```
+
+**2. Ejecuta el instalador automático:**
+```bash
+INSTALAR.bat
+```
+
+**3. Configura tu API Key:**
+- Abre el archivo `.env` 
+- Reemplaza `tu_clave_api_aqui` con tu [API Key de Gemini](https://ai.google.dev)
+- Guarda el archivo
+
+**¡Listo!** Ya puedes usar cualquiera de los scripts `.bat` para procesar facturas.
+
+---
+
+### Instalación Manual (Avanzada)
+
+Si prefieres instalar manualmente:
 
 ### 2. Instalar dependencias
 ```bash
@@ -50,7 +80,7 @@ PROCESAR_FACTURAS.bat
 ```
 3. El archivo Excel se generará como `facturasXX.xlsx`
 
-### Modo Interfaz Web
+### Modo Interfaz Web (Local)
 
 1. Lanza la aplicación web:
 ```bash
@@ -59,6 +89,32 @@ LANZAR_WEB.bat
 2. Abre tu navegador en `http://localhost:8501`
 3. Arrastra y suelta tus facturas
 4. Descarga el Excel generado
+
+### Modo Interfaz Web (Acceso Remoto)
+
+Para acceder desde otro ordenador en la misma red:
+
+1. En el ordenador servidor, ejecuta:
+```bash
+LANZAR_WEB_REMOTO.bat
+```
+2. El script mostrará tu dirección IP local (ej: `192.168.1.100`)
+3. Desde otro ordenador en la red, abre Chrome y accede a:
+```
+http://TU_IP:8501
+```
+(Ejemplo: `http://192.168.1.100:8501`)
+
+**⚠️ Configuración del Firewall:**
+Si no puedes conectar, debes permitir conexiones en el puerto 8501:
+1. Abre `Panel de Control` → `Firewall de Windows Defender`
+2. Clic en `Configuración avanzada`
+3. `Reglas de entrada` → `Nueva regla`
+4. Tipo: `Puerto` → Siguiente
+5. `TCP` → Puerto específico: `8501` → Siguiente
+6. `Permitir la conexión` → Siguiente
+7. Marca todas las redes → Siguiente
+8. Nombre: `Streamlit AutoGestor` → Finalizar
 
 ## 📊 Formato de Salida Excel
 
@@ -90,9 +146,26 @@ APP FACTURACION/
 │   ├── image_processor.py        # Pre-procesamiento imágenes
 │   ├── requirements.txt          # Dependencias Python
 │   └── logo_muniz_nuno.png       # Logo corporativo
-├── PROCESAR_FACTURAS.bat         # Launcher CLI
-├── LANZAR_WEB.bat                # Launcher Web UI
-└── .env                          # Configuración (no incluido)
+│
+├── 📄 Scripts de Ejecución
+│   ├── INSTALAR.bat              # ⚙️ Instalación automática
+│   ├── PROCESAR_FACTURAS.bat     # 💻 Launcher CLI
+│   ├── LANZAR_WEB.bat            # 🌐 Launcher Web UI (local)
+│   ├── LANZAR_WEB_REMOTO.bat     # 🌍 Launcher Web UI (red)
+│   ├── ACTUALIZAR.bat            # 🔄 Actualizar desde GitHub
+│   └── SUBIR_A_GITHUB.bat        # 📤 Publicar en GitHub
+│
+├── 📚 Documentación
+│   ├── README.md                 # Guía completa
+│   ├── QUICKSTART.md             # Instalación rápida
+│   ├── DESCARGA.md               # Descarga sin Git
+│   └── CHANGELOG.md              # Historial de cambios
+│
+├── ⚙️ Configuración
+│   ├── .env                      # API Keys (no incluido en repo)
+│   ├── .env.example              # Plantilla de configuración
+│   ├── .gitignore                # Archivos ignorados por Git
+│   └── cache_facturas.json       # Caché local (no en repo)
 ```
 
 ## ⚙️ Configuración Avanzada
