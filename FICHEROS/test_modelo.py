@@ -33,11 +33,11 @@ def probar_modelo():
     print("PRUEBA DE GEMINI 3.0 PRO")
     print("=" * 70)
     print(f"\nArchivo de prueba: {nombre}")
-    print("\nExtrayendo datos con Gemini 3.0 Pro...\n")
+    print(f"Extrayendo datos con Gemini 3.0 Pro de '{nombre}' (Modo RECIBIDA)...\n")
     
     try:
         # Extraer con el modelo 3 Pro Preview
-        data = extract_invoice_data(archivo_prueba, model_name="gemini-3-pro-preview")
+        data = extract_invoice_data(archivo_prueba, model_name="gemini-3-pro-preview", tipo_factura="recibida")
         
         print("=" * 70)
         print("RESULTADO:")
@@ -54,6 +54,7 @@ def probar_modelo():
             print(f"  - Numero factura: {data.get('numero_factura')}")
             print(f"  - Fecha: {data.get('fecha_expedicion')}")
             print(f"  - NIF: {data.get('contraparte_nif')}")
+            print(f"  - CP: {data.get('contraparte_cod_postal')}")
             print(f"  - Total: {data.get('total_factura')}")
             print(f"  - Confianza: {data.get('confidence_score')}")
         

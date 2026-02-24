@@ -24,12 +24,12 @@ def finalizar_excel(filename="facturas.xlsx"):
         total_row = [
             "TOTAL",
             "", "", "", "", "",
-            f"=SUM(G4:G{last_row})",  # Base Imponible
+            f"=SUM(H4:H{last_row})",  # Base Imponible (antes G)
             "",
-            f"=SUM(I4:I{last_row})",  # Cuota IVA
-            f"=SUM(J4:J{last_row})",  # Total Factura
+            f"=SUM(J4:J{last_row})",  # Cuota IVA (antes I)
+            f"=SUM(K4:K{last_row})",  # Total Factura (antes J)
             "",
-            f"=SUM(L4:L{last_row})",  # Retenciones
+            f"=SUM(M4:M{last_row})",  # Retenciones (antes L)
             "",
             "", ""
         ]
@@ -46,7 +46,7 @@ def finalizar_excel(filename="facturas.xlsx"):
         sheet_proveedores = workbook.create_sheet("PROVEEDORES")
         
         # HEADERS SIN "Nombre Archivo"
-        headers = ["#", "Fecha Expedición", "Número Factura", "Nombre", "NIF", 
+        headers = ["#", "Fecha Expedición", "Número Factura", "Nombre", "NIF", "COD POSTAL",
                    "Base Imponible", "% IVA", "Cuota IVA", "Total Factura",
                    "%Retención", "Retenciones", "Forma de Pago",
                    "Observaciones", "Confianza"]
@@ -73,7 +73,7 @@ def finalizar_excel(filename="facturas.xlsx"):
                 row_data = []
                 row_data.append(sheet.cell(row=row_num, column=1).value)  # #
                 # SALTAR columna 2 (Nombre Archivo)
-                for col_num in range(3, 16):  # Desde columna C hasta O
+                for col_num in range(3, 17):  # Desde columna C hasta P (ahora 16 columnas total - 1 nombre archivo = 15 datos + # = 16)
                     row_data.append(sheet.cell(row=row_num, column=col_num).value)
                 datos.append((row_num, row_data))
         
@@ -122,10 +122,10 @@ def finalizar_excel(filename="facturas.xlsx"):
                     sheet_proveedores.cell(row=current_row, column=col).fill = fill_proveedor
                 
                 # Acumular en desglose IVA
-                tipo_iva = factura[6]  # % IVA (índice 6 sin Nombre Archivo)
-                base_imp = factura[5] or 0  # Base Imponible
-                cuota_iva = factura[7] or 0  # Cuota IVA
-                total_fac = factura[8] or 0  # Total Factura
+                tipo_iva = factura[7]  # % IVA (índice 7 ahora con CP)
+                base_imp = factura[6] or 0  # Base Imponible (índice 6)
+                cuota_iva = factura[8] or 0  # Cuota IVA (índice 8)
+                total_fac = factura[9] or 0  # Total Factura (índice 9)
                 
                 if tipo_iva is not None and tipo_iva != "":
                     desglose_iva_proveedor[tipo_iva]["base"] += float(base_imp) if base_imp else 0
@@ -141,7 +141,7 @@ def finalizar_excel(filename="facturas.xlsx"):
                     if not num_factura_siguiente or not str(num_factura_siguiente).strip():
                         linea_adicional = []
                         linea_adicional.append(sheet.cell(row=siguiente_fila, column=1).value)
-                        for col_num in range(3, 16):
+                        for col_num in range(3, 17):
                             linea_adicional.append(sheet.cell(row=siguiente_fila, column=col_num).value)
                         sheet_proveedores.append(linea_adicional)
                         
@@ -150,10 +150,10 @@ def finalizar_excel(filename="facturas.xlsx"):
                             sheet_proveedores.cell(row=current_row, column=col).fill = fill_proveedor
                         
                         # Acumular en desglose
-                        tipo_iva_linea = linea_adicional[6]
-                        base_linea = linea_adicional[5] or 0
-                        cuota_linea = linea_adicional[7] or 0
-                        total_linea = linea_adicional[8] or 0
+                        tipo_iva_linea = linea_adicional[7]
+                        base_linea = linea_adicional[6] or 0
+                        cuota_linea = linea_adicional[8] or 0
+                        total_linea = linea_adicional[9] or 0
                         
                         if tipo_iva_linea is not None and tipo_iva_linea != "":
                             desglose_iva_proveedor[tipo_iva_linea]["base"] += float(base_linea) if base_linea else 0
@@ -174,7 +174,7 @@ def finalizar_excel(filename="facturas.xlsx"):
                     datos_iva = desglose_iva_proveedor[tipo_iva_key]
                     subtotal_iva_row = [
                         f"  IVA {tipo_iva_key}%",
-                        "", "", "", "",
+                        "", "", "", "", "", # 6 vacías (hasta base)
                         round(datos_iva["base"], 2),
                         tipo_iva_key,
                         round(datos_iva["cuota"], 2),
@@ -195,13 +195,13 @@ def finalizar_excel(filename="facturas.xlsx"):
             # TOTAL GENERAL DEL PROVEEDOR (usando SUM para incluir TODO)
             subtotal_row = [
                 f"TOTAL {nif}",
-                "", "", "", "",
-                f"=SUM(F{start_row_proveedor}:F{end_row_proveedor})",  # Base
+                "", "", "", "", "", # 6 vacías
+                f"=SUM(G{start_row_proveedor}:G{end_row_proveedor})",  # Base (col G)
                 "",
-                f"=SUM(H{start_row_proveedor}:H{end_row_proveedor})",  # Cuota IVA
-                f"=SUM(I{start_row_proveedor}:I{end_row_proveedor})",  # Total
+                f"=SUM(I{start_row_proveedor}:I{end_row_proveedor})",  # Cuota (col I)
+                f"=SUM(J{start_row_proveedor}:J{end_row_proveedor})",  # Total (col J)
                 "",
-                f"=SUM(K{start_row_proveedor}:K{end_row_proveedor})",  # Retenciones
+                f"=SUM(L{start_row_proveedor}:L{end_row_proveedor})",  # Retenciones (col L)
                 "",
                 "", ""
             ]
@@ -239,7 +239,7 @@ def finalizar_excel(filename="facturas.xlsx"):
                     if not num_factura_siguiente or not str(num_factura_siguiente).strip():
                         linea_adicional = []
                         linea_adicional.append(sheet.cell(row=siguiente_fila, column=1).value)
-                        for col_num in range(3, 16):
+                        for col_num in range(3, 17):
                             linea_adicional.append(sheet.cell(row=siguiente_fila, column=col_num).value)
                         sheet_proveedores.append(linea_adicional)
                         for col in range(1, len(headers) + 1):
@@ -253,13 +253,13 @@ def finalizar_excel(filename="facturas.xlsx"):
             
             subtotal_sin_nif = [
                 "TOTAL SIN NIF",
-                "", "", "", "",
-                f"=SUM(F{start_row_sin_nif}:F{end_row_sin_nif})",
+                "", "", "", "", "", # 6 vacías
+                f"=SUM(G{start_row_sin_nif}:G{end_row_sin_nif})",
                 "",
-                f"=SUM(H{start_row_sin_nif}:H{end_row_sin_nif})",
                 f"=SUM(I{start_row_sin_nif}:I{end_row_sin_nif})",
+                f"=SUM(J{start_row_sin_nif}:J{end_row_sin_nif})",
                 "",
-                f"=SUM(K{start_row_sin_nif}:K{end_row_sin_nif})",
+                f"=SUM(L{start_row_sin_nif}:L{end_row_sin_nif})",
                 "",
                 "", ""
             ]
@@ -281,13 +281,13 @@ def finalizar_excel(filename="facturas.xlsx"):
         # No sumar líneas individuales para evitar duplicación
         total_general_row = [
             "TOTAL GENERAL",
-            "", "", "", "",
-            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",F{inicio_datos}:F{fin_datos})",
+            "", "", "", "", "", # 6 vacías
+            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",G{inicio_datos}:G{fin_datos})",
             "",
-            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",H{inicio_datos}:H{fin_datos})",
             f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",I{inicio_datos}:I{fin_datos})",
+            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",J{inicio_datos}:J{fin_datos})",
             "",
-            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",K{inicio_datos}:K{fin_datos})",
+            f"=SUMIF(A{inicio_datos}:A{fin_datos},\"TOTAL*\",L{inicio_datos}:L{fin_datos})",
             "",
             "", ""
         ]

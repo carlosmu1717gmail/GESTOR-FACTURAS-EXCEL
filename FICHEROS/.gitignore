@@ -1,0 +1,17 @@
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Archivos de caché
+__pycache__/
+*.pyc
+cache_facturas.json
+
+# Archivos Excel generados
+*.xlsx
+*.xls
+
+# Carpetas del sistema
+.DS_Store
+Thumbs.db

@@ -16,7 +16,7 @@ def inicializar_excel(filename: str = "facturas.xlsx"):
     
     columns_spanish = [
         "#", "Nombre Archivo", "Fecha Expedición",
-        "Número Factura", "Nombre", "NIF",
+        "Número Factura", "Nombre", "NIF", "COD POSTAL",
         "Base Imponible", "% IVA", "Cuota IVA", "Total Factura",
         "%Retención", "Retenciones", "Forma de Pago",
         "Observaciones", "Confianza"
@@ -56,7 +56,7 @@ def save_to_excel(data: dict, filename: str = "facturas.xlsx"):
     
     columns = [
         "file_name", "fecha_expedicion", "numero_factura",
-        "contraparte_nombre", "contraparte_nif", "base_imponible",
+        "contraparte_nombre", "contraparte_nif", "contraparte_cod_postal", "base_imponible",
         "tipo_iva", "cuota_iva", "total_factura", "porcentaje_retencion",
         "importe_retencion", "forma_pago", "issues", "confidence_score"
     ]
@@ -98,7 +98,7 @@ def save_to_excel(data: dict, filename: str = "facturas.xlsx"):
             # Líneas adicionales
             for item_iva in desglose_iva[1:]:
                 row_adicional = [
-                    "", "", "", "", "", "",  # Vacías hasta base (6 vacías ahora)
+                    "", "", "", "", "", "", "",  # Vacías hasta base (7 vacías ahora con CP)
                     item_iva.get("base_imponible"),
                     item_iva.get("tipo_iva"),
                     item_iva.get("cuota_iva"),
@@ -166,7 +166,7 @@ def finalizar_y_guardar_excel(filename: str = "facturas.xlsx"):
                     # Alineación
                     if col_num == 1:  # Columna #
                         cell.alignment = alignment_center
-                    elif col_num in [7, 8, 9, 10, 11, 12]:  # Columnas numéricas (ajustado por eliminar columna)
+                    elif col_num in [8, 9, 10, 11, 12, 13]:  # Columnas numéricas (ajustado por CP)
                         cell.alignment = Alignment(horizontal="right", vertical="center")
                     else:
                         cell.alignment = alignment_left

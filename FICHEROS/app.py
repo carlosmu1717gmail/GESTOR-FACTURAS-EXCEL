@@ -122,6 +122,19 @@ with st.sidebar:
     
     st.markdown("---")
     
+    # Selector de tipo de factura
+    tipo_factura_ui = st.radio(
+        "Tipo de Facturas",
+        ("RECIBIDAS (Gastos)", "EMITIDAS (Ventas)"),
+        index=0,
+        help="Selecciona si vas a procesar facturas de proveedores (Gastos) o a clientes (Ventas)"
+    )
+    
+    # Mapeo a valor interno
+    tipo_interno = "recibida" if "RECIBIDAS" in tipo_factura_ui else "emitida"
+    
+    st.markdown("---")
+    
     st.markdown("### 📊 Estadísticas")
     if st.session_state.datos_facturas:
         st.metric("Facturas procesadas", len(st.session_state.datos_facturas))
@@ -183,7 +196,7 @@ with tab1:
                 
                 try:
                     # Extraer datos con Gemini 3 Pro Preview
-                    data = extract_invoice_data(tmp_path, model_name=modelo_seleccionado)
+                    data = extract_invoice_data(tmp_path, model_name=modelo_seleccionado, tipo_factura=tipo_interno)
                     data["file_name"] = uploaded_file.name
                     nuevas_facturas.append(data)
                     

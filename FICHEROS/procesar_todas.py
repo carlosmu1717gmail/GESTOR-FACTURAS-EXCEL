@@ -28,6 +28,21 @@ def procesar_todas_facturas(directorio_facturas):
     Procesa todas las facturas (PDF/JPG/PNG) de un directorio.
     OPTIMIZADO con caché y pre-procesamiento de imágenes.
     """
+    # Preguntar tipo de facturas
+    print("\n" + "="*50)
+    print("  SELECCION DE TIPO DE FACTURAS")
+    print("="*50)
+    print("  1. RECIBIDAS (Gastos) - Busca datos del PROVEEDOR")
+    print("  2. EMITIDAS (Ventas)  - Busca datos del CLIENTE")
+    opcion = input("\n> Selecciona una opcion (1 o 2): ").strip()
+    
+    tipo = "recibida"
+    if opcion == "2":
+        tipo = "emitida"
+        print("\n>> Se procesaran como FACTURAS EMITIDAS (Extraccion datos Cliente)")
+    else:
+        print("\n>> Se procesaran como FACTURAS RECIBIDAS (Extraccion datos Proveedor)")
+
     # Inicializar gestor de caché
     cache = CacheManager()
     
@@ -100,8 +115,8 @@ def procesar_todas_facturas(directorio_facturas):
                 # OPTIMIZACIÓN 2: Pre-procesar imagen antes de enviar a Gemini
                 archivo_procesado = preprocesar_imagen(archivo)
                 
-                # Extraer datos con Gemini 3 Pro Preview
-                data = extract_invoice_data(archivo_procesado, model_name="gemini-3-pro-preview")
+                # Extraer datos con Gemini 3 Pro Preview (última versión, máxima precisión)
+                data = extract_invoice_data(archivo_procesado, model_name="gemini-3-pro-preview", tipo_factura=tipo)
                 
                 # Limpiar imagen temporal si se creó
                 if archivo_procesado != archivo:

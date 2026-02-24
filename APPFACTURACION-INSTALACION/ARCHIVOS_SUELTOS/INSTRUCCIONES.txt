@@ -1,0 +1,25 @@
+INSTRUCCIONES DE USO - PROCESADOR DE FACTURAS
+=============================================
+
+Esta carpeta contiene DOS formas de usar la herramienta:
+
+OPCION 1: MODO RÁPIDO (SIN INSTALAR NADA)
+-----------------------------------------
+Ideal si solo quieres convertir datos a Excel y ya tienes los archivos JSON.
+1. Busca el archivo "Arrastrar_JSON_Aqui.bat".
+2. ARRASTRA tus archivos de datos (.json) encima de él.
+3. El Excel se creará automáticamente.
+
+OPCION 2: MODO VISUAL (WEB APP)
+-------------------------------
+Ideal si quieres ver gráficos, subir Facturas PDF directamente y verlas en pantalla.
+1. REQUIERE tener Python instalado en el ordenador.
+2. Haz doble clic en "LANZAR_WEB.bat".
+3. Se abrirá una pantalla en tu navegador para subir facturas y procesarlas.
+
+DUDAS FRECUENTES
+----------------
+- ¿Dónde está mi Excel? -> Se guarda en esta misma carpeta.
+- ¿Qué es el archivo .env? -> Contiene tu clave secreta para la IA. NO LO BORRES ni lo compartas.
+
+Para mover esta aplicación a otro sitio, mueve LA CARPETA COMPLETA, no solo los iconos.
