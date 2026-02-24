@@ -277,9 +277,21 @@ with tab2:
             
             with col3:
                 st.markdown("**💰 Importes**")
-                st.text(f"Base: {factura_sel.get('base_imponible', 0):.2f} €")
-                st.text(f"IVA: {factura_sel.get('cuota_iva', 0):.2f} €")
-                st.text(f"Total: {factura_sel.get('total_factura', 0):.2f} €")
+                
+                # Proteger conversión a float para evitar TypeError con None o strings vacíos
+                def safe_float(val):
+                    try:
+                        return float(val) if val is not None and val != "" else 0.0
+                    except (ValueError, TypeError):
+                        return 0.0
+
+                base_imp = safe_float(factura_sel.get('base_imponible', 0))
+                cuota_iva = safe_float(factura_sel.get('cuota_iva', 0))
+                total_factura = safe_float(factura_sel.get('total_factura', 0))
+
+                st.text(f"Base: {base_imp:.2f} €")
+                st.text(f"IVA: {cuota_iva:.2f} €")
+                st.text(f"Total: {total_factura:.2f} €")
             
             # Mostrar issues
             issues = factura_sel.get('issues', [])
