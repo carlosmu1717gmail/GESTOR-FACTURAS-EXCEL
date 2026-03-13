@@ -227,7 +227,7 @@ def extract_invoice_data(file_path: str, model_name: str = "gemini-3-pro-preview
         
         # Detectar errores específicos
         if "API_KEY_INVALID" in error_msg or "API key not valid" in error_msg:
-            issue_type = "API_KEY_INVALID"
+            issue_type = f"API_KEY_INVALID (Recibida clave de longitud {len(str(API_KEY))}, empieza por '{str(API_KEY)[:5]}...')"
             print(f"\n❌ ERROR CRÍTICO: La API Key proporcionada no es válida. Revisa tu archivo .env")
         else:
             print(f"\n❌ ERROR DE EXTRACCIÓN: {error_msg}")
