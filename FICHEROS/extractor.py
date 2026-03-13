@@ -61,6 +61,9 @@ if not API_KEY:
 if not API_KEY:
     raise ValueError("❌ ERROR: No se encontró la variable GEMINI_API_KEY. Configúrala en el archivo .env o en los Secrets de Streamlit.")
 
+# Limpiar comillas o espacios residuales
+API_KEY = str(API_KEY).strip().strip("'").strip('"')
+
 genai.configure(api_key=API_KEY)
 
 # Prompt del sistema (Reglas estrictas definidas por el usuario)
