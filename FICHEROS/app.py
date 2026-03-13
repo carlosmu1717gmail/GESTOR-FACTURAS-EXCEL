@@ -22,12 +22,14 @@ def get_logo_base64():
     """Convierte el logo a base64 para incrustar en HTML. 
        Busca en varios directorios por si la ejecución varía entre Windows y la nube."""
     import os
+    import streamlit as st
     
     # Pruebas de posibles rutas donde esté la imagen
+    dir_actual = os.path.dirname(os.path.abspath(__file__))
     posibles_rutas = [
-        "logo_muniz_nuno.png", # Si lo levanta desde la raíz (Streamlit Cloud a veces)
-        os.path.join(os.path.dirname(__file__), "logo_muniz_nuno.png"), # Si lo levanta desde FICHEROS/
-        os.path.join(os.getcwd(), "FICHEROS", "logo_muniz_nuno.png") # Si el current working directory es la raíz
+        "logo_muniz_nuno.png", 
+        os.path.join(dir_actual, "logo_muniz_nuno.png"), 
+        os.path.join(os.getcwd(), "FICHEROS", "logo_muniz_nuno.png")
     ]
     
     for ruta in posibles_rutas:
@@ -35,7 +37,13 @@ def get_logo_base64():
             with open(ruta, "rb") as img_file:
                 return base64.b64encode(img_file.read()).decode()
     
-    # Si llega aquí, es que no encontró la imagen en ninguna ruta
+    # Debug VISUAL: esto imprimirá un cuadro rojo en la app si falla
+    try:
+        archivos_dir = os.listdir(dir_actual)
+        st.error(f"❌ LOGO NO ENCONTRADO. Archivos reales en {dir_actual}: {', '.join(archivos_dir)}")
+    except Exception as e:
+        st.error(f"Error listando {dir_actual}: {e}")
+        
     return None
 
 
