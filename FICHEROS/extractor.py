@@ -46,10 +46,20 @@ def formatear_fecha(fecha_str):
 # Cargar variables de entorno
 load_dotenv()
 
-# Configurar API Key
+# Configurar API Key (Primero buscar en .env local, luego en Secrets de Streamlit)
 API_KEY = os.getenv("GEMINI_API_KEY")
+
 if not API_KEY:
-    raise ValueError("❌ ERROR: No se encontró la variable GEMINI_API_KEY en el archivo .env")
+    try:
+        import streamlit as st
+        API_KEY = st.secrets.get("GEMINI_API_KEY")
+    except ImportError:
+        pass
+    except FileNotFoundError:
+        pass
+
+if not API_KEY:
+    raise ValueError("❌ ERROR: No se encontró la variable GEMINI_API_KEY. Configúrala en el archivo .env o en los Secrets de Streamlit.")
 
 genai.configure(api_key=API_KEY)
 
