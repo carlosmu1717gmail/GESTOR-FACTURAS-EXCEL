@@ -20,7 +20,11 @@ st.set_page_config(
 # Función para cargar logo como base64
 def get_logo_base64():
     """Convierte el logo a base64 para incrustar en HTML"""
-    logo_path = "logo_muniz_nuno.png"
+    import os
+    # Obtener la ruta absoluta del directorio donde está este script (app.py)
+    director_actual = os.path.dirname(os.path.abspath(__file__))
+    logo_path = os.path.join(director_actual, "logo_muniz_nuno.png")
+    
     if os.path.exists(logo_path):
         with open(logo_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
