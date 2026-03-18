@@ -22,28 +22,26 @@ def get_logo_base64():
     """Convierte el logo a base64 para incrustar en HTML. 
        Busca en varios directorios por si la ejecución varía entre Windows y la nube."""
     import os
-    import streamlit as st
+    from pathlib import Path
+    
+    # Directorio donde está este archivo (app.py) - funciona siempre
+    dir_script = Path(__file__).resolve().parent
     
     # Pruebas de posibles rutas donde esté la imagen
-    dir_actual = os.path.dirname(os.path.abspath(__file__))
     posibles_rutas = [
-        "logo_muniz_nuno.png", 
-        os.path.join(dir_actual, "logo_muniz_nuno.png"), 
-        os.path.join(os.getcwd(), "FICHEROS", "logo_muniz_nuno.png")
+        dir_script / "logo_muniz_nuno.png",                      # Mismo directorio que app.py
+        Path("logo_muniz_nuno.png"),                              # CWD directo
+        Path("FICHEROS") / "logo_muniz_nuno.png",                # CWD + FICHEROS
+        dir_script.parent / "FICHEROS" / "logo_muniz_nuno.png",  # Un nivel arriba + FICHEROS
+        Path(os.getcwd()) / "FICHEROS" / "logo_muniz_nuno.png",  # CWD explícito + FICHEROS
     ]
     
     for ruta in posibles_rutas:
-        if os.path.exists(ruta):
+        if ruta.exists():
             with open(ruta, "rb") as img_file:
                 return base64.b64encode(img_file.read()).decode()
     
-    # Debug VISUAL: esto imprimirá un cuadro rojo en la app si falla
-    try:
-        archivos_dir = os.listdir(dir_actual)
-        st.error(f"❌ LOGO NO ENCONTRADO. Archivos reales en {dir_actual}: {', '.join(archivos_dir)}")
-    except Exception as e:
-        st.error(f"Error listando {dir_actual}: {e}")
-        
+    # Si no se encontró, no mostrar error visual en producción
     return None
 
 
