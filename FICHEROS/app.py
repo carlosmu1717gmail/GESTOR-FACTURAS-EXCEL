@@ -137,6 +137,34 @@ with st.sidebar:
     
     st.markdown("---")
     
+    # Campo para API Key
+    st.markdown("### 🔑 API Key de Gemini")
+    
+    # Verificar si ya hay key configurada (en .env o secrets)
+    import os
+    key_previa = os.getenv("GEMINI_API_KEY")
+    if not key_previa:
+        try:
+            key_previa = st.secrets.get("GEMINI_API_KEY")
+        except (FileNotFoundError, AttributeError):
+            pass
+    
+    if key_previa:
+        st.success("✅ API Key detectada (archivo .env o Secrets)")
+    else:
+        api_key_input = st.text_input(
+            "Introduce tu API Key de Gemini",
+            type="password",
+            key="gemini_api_key_input",
+            help="Obtén tu key en https://aistudio.google.com/app/apikey"
+        )
+        if api_key_input:
+            st.success("✅ API Key introducida")
+        else:
+            st.warning("⚠️ Sin API Key. Introdúcela aquí o configúrala en .env")
+    
+    st.markdown("---")
+    
     # NOTA: SIEMPRE gemini-3-pro-preview (el más avanzado)
     modelo_seleccionado = "gemini-3-pro-preview"
     st.info(f"🤖 Modelo: **{modelo_seleccionado}**\n\n(Gemini 3 Pro - Máxima precisión)")

@@ -46,25 +46,42 @@ def formatear_fecha(fecha_str):
 # Cargar variables de entorno
 load_dotenv()
 
-# Configurar API Key (Primero buscar en .env local, luego en Secrets de Streamlit)
-API_KEY = os.getenv("GEMINI_API_KEY")
+def _obtener_api_key():
+    """Busca la API key en todos los sitios posibles: .env, secrets, session_state."""
+    # 1) Variable de entorno (.env local)
+    key = os.getenv("GEMINI_API_KEY")
+    
+    # 2) Secrets de Streamlit Cloud
+    if not key:
+        try:
+            import streamlit as st
+            key = st.secrets.get("GEMINI_API_KEY")
+        except (ImportError, FileNotFoundError, AttributeError):
+            pass
+    
+    # 3) Session state (inyectada desde la UI)
+    if not key:
+        try:
+            import streamlit as st
+            key = st.session_state.get("gemini_api_key_input")
+        except (ImportError, AttributeError):
+            pass
+    
+    if key:
+        key = str(key).strip().strip("'").strip('"')
+    
+    return key
 
-if not API_KEY:
-    try:
-        import streamlit as st
-        API_KEY = st.secrets.get("GEMINI_API_KEY")
-    except ImportError:
-        pass
-    except FileNotFoundError:
-        pass
+def _configurar_genai():
+    """Configura genai con la API key disponible. Devuelve True si hay key, False si no."""
+    key = _obtener_api_key()
+    if key:
+        genai.configure(api_key=key)
+        return True
+    return False
 
-if not API_KEY:
-    raise ValueError("❌ ERROR: No se encontró la variable GEMINI_API_KEY. Configúrala en el archivo .env o en los Secrets de Streamlit.")
-
-# Limpiar comillas o espacios residuales
-API_KEY = str(API_KEY).strip().strip("'").strip('"')
-
-genai.configure(api_key=API_KEY)
+# Intentar configurar al arrancar (no crashear si falta)
+_configurar_genai()
 
 # Prompt del sistema (Reglas estrictas definidas por el usuario)
 SYSTEM_PROMPT = """
@@ -133,6 +150,14 @@ def extract_invoice_data(file_path: str, model_name: str = "gemini-3-pro-preview
     Extrae datos de una factura usando Google Gemini API
     """
     try:
+        # Re-configurar genai con la key más reciente (puede venir del UI)
+        if not _configurar_genai():
+            return {
+                "error": "NO_API_KEY",
+                "confidence_score": 0.0,
+                "issues": ["NO_API_KEY: Introduce tu API Key de Gemini en la barra lateral"]
+            }
+        
         # Usar Path para imprimir correctamente, pero usar file_path original para subir
         path_display = Path(file_path)
         
@@ -142,7 +167,7 @@ def extract_invoice_data(file_path: str, model_name: str = "gemini-3-pro-preview
             mime_type = "image/png"
 
         # Subir archivo a Gemini (necesario para PDFs y archivos grandes)
-        print(f"   Subiendo archivo a Gemini: {path_display.name} ...")
+        print(f"   [UPLOAD] Subiendo archivo a Gemini: {path_display.name} ...")
         uploaded_file = genai.upload_file(file_path, mime_type=mime_type)
         
         # Cargar modelo
@@ -156,7 +181,7 @@ def extract_invoice_data(file_path: str, model_name: str = "gemini-3-pro-preview
         else:
             prompt_ajustado += "\nCONTEXTO: Esta es una factura EMITIDA (Venta). Extrae los datos del CLIENTE (Receptor)."
             
-        print("   Analizando con Gemini...")
+        print("   [AI] Analizando con Gemini...")
         response = model.generate_content([prompt_ajustado, uploaded_file])
         
         # Procesar respuesta
@@ -227,10 +252,17 @@ def extract_invoice_data(file_path: str, model_name: str = "gemini-3-pro-preview
         
         # Detectar errores específicos
         if "API_KEY_INVALID" in error_msg or "API key not valid" in error_msg:
-            issue_type = f"API_KEY_INVALID (Recibida clave de longitud {len(str(API_KEY))}, empieza por '{str(API_KEY)[:5]}...')"
-            print(f"\n❌ ERROR CRÍTICO: La API Key proporcionada no es válida. Revisa tu archivo .env")
+            current_key = _obtener_api_key()
+            key_info = f"longitud={len(current_key)}" if current_key else "sin key"
+            issue_type = f"API_KEY_INVALID ({key_info})"
+            print(f"\n[ERROR] La API Key proporcionada no es valida. Revisa tu configuracion.")
+        elif "429" in error_msg or "exceeded" in error_msg.lower() or "quota" in error_msg.lower():
+            issue_type = "CUOTA_EXCEDIDA"
+            print(f"\n[ERROR] Has excedido la cuota gratuita de tu API Key de Gemini.")
+            print(f"  -> Genera una nueva API Key en https://aistudio.google.com/app/apikey")
+            print(f"  -> O espera a que se renueve tu cuota (normalmente 1 minuto o al dia siguiente).")
         else:
-            print(f"\n❌ ERROR DE EXTRACCIÓN: {error_msg}")
+            print(f"\n[ERROR] Error de extraccion: {error_msg}")
             
         return {
             "error": error_msg,
